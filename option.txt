@@ -1,0 +1,161 @@
+option = {
+  title: {
+    text: 'Basic Graph'
+  },
+  tooltip: {
+    show: true, // 启用提示框
+        trigger: 'item', // 触发方式，这里使用 'item' 表示鼠标悬停在节点或连接线上都会触发提示框
+        formatter: function(params) {
+            if (params.dataType === 'node') {
+                // 当数据类型是节点时，显示节点的名称和其他内容
+                return params.data.name + '<br>其他内容';
+            }
+        }
+  },
+  animationDurationUpdate: 1500,
+  animationEasingUpdate: 'quinticInOut',
+  series: [
+    {
+      type: 'graph',
+      layout: 'none',
+      symbolSize: 50,
+      roam: false,
+      label: {
+          show: true,
+          fontSize: 16, // 增大字体大小，可以根据需要调整
+      },
+      edgeSymbol: ['circle', 'none'],
+      edgeSymbolSize: [4, 10],
+      edgeLabel: {
+        fontSize: 20
+      },
+      data: [
+        {
+          name: 'B',
+          x: 300,
+          y: 300
+        },
+        {
+          name: 'C',
+          x: 600,
+          y: 300
+        },
+        {
+          name: 'H',
+          x: 950,
+          y: 300
+        },
+        {
+          name: 'E',
+          x: 450,
+          y: 100
+        },
+        {
+          name: 'F',
+          x: 800,
+          y: 100
+        },
+        {
+          name: 'G',
+          x: 800,
+          y: 500
+        },
+        {
+          name: 'A',
+          x: 450,
+          y: 500
+        },
+        {
+          name: 'S',
+          x: 350,
+          y: 500,
+          symbol: 'rect', // 使用矩形形状
+          symbolSize: [70, 50], // 设置矩形的大小
+          itemStyle: {
+              color: '#669933' // 设置背景颜色为青色
+          },
+        },
+        {
+          name: 'd1',
+          x: 900,
+          y: 100,
+          symbol: 'rect', // 使用矩形形状
+          symbolSize: [70, 50], // 设置矩形的大小
+          itemStyle: {
+              color: '#669933' // 设置背景颜色为青色
+          },
+        },
+        {
+          name: 'd2',
+          x: 1050,
+          y: 300,
+          symbol: 'rect', // 使用矩形形状
+          symbolSize: [70, 50], // 设置矩形的大小
+          itemStyle: {
+              color: '#669933' // 设置背景颜色为青色
+          },
+        },
+      ],
+      // links: [],
+      links: [
+        {
+          source: 'A',
+          target: 'B'
+        },
+        {
+          source: 'B',
+          target: 'E'
+        },
+        {
+          source: 'E',
+          target: 'C'
+        },
+        {
+          source: 'C',
+          target: 'A'
+        },
+        {
+          source: 'E',
+          target: 'F'
+        },
+        {
+          source: 'F',
+          target: 'H'
+        },
+        {
+          source: 'H',
+          target: 'G'
+        },
+        {
+          source: 'F',
+          target: 'G'
+        },
+        {
+          source: 'G',
+          target: 'A'
+        },
+        {
+          source: 'S',
+          target: 'A'
+        },
+        {
+          source: 'G',
+          target: 'A'
+        },
+        {
+          source: 'F',
+          target: 'd1'
+        },
+        {
+          source: 'H',
+          target: 'd2'
+        },
+      ],
+      lineStyle: {
+        opacity: 0.9,
+        width: 2,
+        curveness: 0
+      }
+    }
+  ]
+};
