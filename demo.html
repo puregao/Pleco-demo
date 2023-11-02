@@ -154,25 +154,25 @@
       <div class="dropdown">
         <span id="dropdown-A">type A</span>
         <div class="dropdown-content">
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', 'a')">a</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', 'b')">b</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', 'c')">c</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '1')">引入错误种类A的1错误</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '2')">引入错误种类A的2错误</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '3')">引入错误种类A的3错误</button>
         </div>
       </div>
       <div class="dropdown">
         <span id="dropdown-B">type B</span>
         <div class="dropdown-content">
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', 'x')">x</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', 'y')">y</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', 'z')">z</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '1')">引入错误种类B的1错误</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '2')">引入错误种类B的2错误</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '3')">引入错误种类B的3错误</button>
         </div>
       </div>
       <div class="dropdown">
         <span id="dropdown-C">type C</span>
         <div class="dropdown-content">
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('C', 'p')">p</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('C', 'q')">q</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('C', 'r')">r</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('C', '1')">引入错误种类C的1错误</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('C', '2')">引入错误种类B的2错误</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('C', '3')">引入错误种类B的3错误</button>
         </div>
       </div>
 	  <div class="button-bar">
@@ -182,10 +182,11 @@
       <div>
         <div class="text-box" id="node-info-box">
 			<div id="instruction1">Click a node on the left to see its configuration.</div>
-			<pre id="file-content"></pre>
+			<pre id="file-content1"></pre>
 		</div>
         <div class="text-box" id="selected-dropdown-box">
-			Configuration change we introduce to the device.
+			<div id="instruction2">Configuration change we introduce to the device.</div>
+			<pre id="file-content2"></pre>
 		</div>
       </div>
       <div class="button-bar">
@@ -222,8 +223,9 @@
 	
 	  // 更新 两个文本框 的内容为默认
 	  document.getElementById('instruction1').style.display = 'block';
-	  document.getElementById('file-content').textContent = ' ';
-	  document.getElementById('selected-dropdown-box').textContent = 'Configuration change we introduce to the device.';
+	  document.getElementById('file-content1').textContent = ' ';
+	  document.getElementById('instruction2').style.display = 'block';
+	  document.getElementById('file-content2').textContent = ' ';
 	});
 
 	
@@ -234,15 +236,27 @@
 	};
 
 	function selectOption(dropdownName, optionText) {
+	  document.getElementById('instruction2').style.display = 'none';
+	  document.getElementById('file-content2').textContent = '';
+	
 	  // 更新相应下拉框的已点击选项
 	  clickedOptions[dropdownName] = optionText;
-	
-	  // 更新 selected-dropdown-box 的显示
-	  const selectedDropdownBox = document.getElementById('selected-dropdown-box');
-	  const displayText = Object.keys(clickedOptions)
-	    .map((name) => (clickedOptions[name] ? `${name}[${clickedOptions[name]}]` : ''))
-	    .join(' ');
-	  selectedDropdownBox.textContent = displayText;
+	  
+	  //更新file-content2的内容
+	  for (const key in clickedOptions) {
+		  if (clickedOptions[key] != '') {
+			  var addr = 'assets/error-introduce/';
+			  addr = addr + key + '-' + clickedOptions[key] + '.txt';
+			  fetch(addr)
+			    .then(response => response.text())
+			    .then(data => {
+			      document.getElementById('file-content2').textContent = document.getElementById('file-content2').textContent + data + '\n\n'; // 将文件内容显示在文本框中
+			    })
+			    .catch(error => {
+			      console.error('无法读取文件:', error);
+			    });
+		  }
+	  }
 	}
 
 
@@ -266,7 +280,7 @@
 		  fetch(addr)
 		    .then(response => response.text())
 		    .then(data => {
-		      document.getElementById('file-content').textContent = data; // 将文件内容显示在文本框中
+		      document.getElementById('file-content1').textContent = data; // 将文件内容显示在文本框中
 		    })
 		    .catch(error => {
 		      console.error('无法读取文件:', error);
