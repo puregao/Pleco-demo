@@ -132,6 +132,11 @@
 	  font-size: 16px; /* 文本字号 */
 	  font-weight: bold; /* 文本加粗 */
 	}
+	
+	#instruction1,
+	#instruction2 {
+		display: block;
+	}
 
 
   </style>
@@ -175,8 +180,13 @@
 	  </div>
       <div class="title">Configuration showcase</div>
       <div>
-        <div class="text-box" id="node-info-box">Click a node on the left to see its configuration.</div>
-        <div class="text-box" id="selected-dropdown-box">Configuration change we introduce to the device.</div>
+        <div class="text-box" id="node-info-box">
+			<div id="instruction1">Click a node on the left to see its configuration.</div>
+			<pre id="file-content"></pre>
+		</div>
+        <div class="text-box" id="selected-dropdown-box">
+			Configuration change we introduce to the device.
+		</div>
       </div>
       <div class="button-bar">
         <button class="button btn btn-primary btn-xl">Diagnose</button>
@@ -210,9 +220,10 @@
 	    clickedOptions[key] = '';
 	  }
 	
-	  // 更新 selected-dropdown-box 的内容为默认
-	  const selectedDropdownBox = document.getElementById('selected-dropdown-box');
-	  selectedDropdownBox.textContent = 'Configuration change we introduce to the device.'; // 这里将其重置为默认内容，你可以根据需要设置默认文本
+	  // 更新 两个文本框 的内容为默认
+	  document.getElementById('instruction1').style.display = 'block';
+	  document.getElementById('file-content').textContent = ' ';
+	  document.getElementById('selected-dropdown-box').textContent = 'Configuration change we introduce to the device.';
 	});
 
 	
@@ -246,11 +257,21 @@
 	// 监听节点点击事件，结果展示在第一个文本框里
 	  myChart.on('click', function (params) {
 	    if (params.dataType === 'node') {
-	      // 获取点击的节点名称
+	      // 获取点击的节点名称		  
 	      var nodeName = params.data.name;
+		  var addr = 'assets/node-config/' + nodeName + '.txt';
 	      
-	      // 将节点名称显示在 node-info-box 中
-	      document.getElementById('node-info-box').textContent = "configuration of node "+nodeName;
+		  document.getElementById('instruction1').style.display = 'none';
+		  
+		  fetch(addr)
+		    .then(response => response.text())
+		    .then(data => {
+		      document.getElementById('file-content').textContent = data; // 将文件内容显示在文本框中
+		    })
+		    .catch(error => {
+		      console.error('无法读取文件:', error);
+		    });
+	      
 	    }
 	  });
 
