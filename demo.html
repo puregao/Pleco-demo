@@ -176,7 +176,7 @@
         </div>
       </div>
 	  <div class="button-bar">
-	    <button class="button btn btn-primary btn-xl">Introduce</button>
+	    <button id="introduce-button" class="button btn btn-primary btn-xl">Introduce</button>
 	  </div>
       <div class="title">Configuration showcase</div>
       <div>
@@ -190,7 +190,7 @@
 		</div>
       </div>
       <div class="button-bar">
-        <button class="button btn btn-primary btn-xl">Diagnose</button>
+        <button id="diagnose-btn" class="button btn btn-primary btn-xl">Diagnose</button>
         <button class="button btn btn-primary btn-xl" id="reset-button">Reset</button>
       </div>
 	  <div class="title">Diagnose result</div>
@@ -208,11 +208,33 @@
 
   <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
   <script type="text/javascript">
+	var introduce = false;
     // 底部按钮点击事件处理
-    document.getElementById('back-button').addEventListener('click', function() {
-      // 使用 window.location 导航到 index.html
-      window.location.href = 'index.html';
-    });
+    document.getElementById('introduce-button').addEventListener('click', function() {
+      // 点击introduce按钮设置introduce变量为true，只有该变量为true才能diagnose
+	  for (const key in clickedOptions) {
+	  	if (clickedOptions[key] != '') {
+			introduce = true;
+			break;
+		}
+	  }
+	  if(introduce == false){
+		  alert("You havn't choosen any error to introduce!");
+	  }
+	});
+	
+	document.getElementById('diagnose-btn').addEventListener('click', function() {
+	  // 只有introduce变量为true才能diagnose
+	  if(introduce == false){
+		  alert("You need to press the INTRODUCE button to inject errors!");
+	  }
+	});
+	
+	//introduce按钮引入错误
+	document.getElementById('back-button').addEventListener('click', function() {
+	  // 使用 window.location 导航到 index.html
+	  window.location.href = 'index.html';
+	});
 	
 	//重置引入的错误配置
 	document.getElementById('reset-button').addEventListener('click', function() {
