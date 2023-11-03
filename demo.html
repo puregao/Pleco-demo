@@ -223,13 +223,6 @@
 	  }
 	});
 	
-	document.getElementById('diagnose-btn').addEventListener('click', function() {
-	  // 只有introduce变量为true才能diagnose
-	  if(introduce == false){
-		  alert("You need to press the INTRODUCE button to inject errors!");
-	  }
-	});
-	
 	//introduce按钮引入错误
 	document.getElementById('back-button').addEventListener('click', function() {
 	  // 使用 window.location 导航到 index.html
@@ -242,6 +235,8 @@
 	  for (const key in clickedOptions) {
 	    clickedOptions[key] = '';
 	  }
+	  
+	  introdece = false;
 	
 	  // 更新 两个文本框 的内容为默认
 	  document.getElementById('instruction1').style.display = 'block';
@@ -280,6 +275,49 @@
 		  }
 	  }
 	}
+	
+	//在这里定义引入错误到诊断结果的映射
+	const res = {
+		//''代表没有引入错误
+		res1 : [["1",'',''],["2",'','']],
+		res2 : ["3",'',''],
+		res3 : ['','',''],
+	};
+	
+	//diagnose按钮诊断错我
+	document.getElementById('diagnose-btn').addEventListener('click', function() {
+	  // 只有introduce变量为true才能diagnose
+	  if(introduce == false){
+		  alert("You need to press the INTRODUCE button to inject errors!");
+	  }
+	  else {
+		  var get_res = [];
+		  for (const key in clickedOptions) {
+			  get_res.push(clickedOptions[key]);
+		  }
+		  console.log("get_res:" +get_res);
+		  
+		  for (const key in res) {
+		    if (Array.isArray(res[key])) {
+		      // 检查当前属性是否是数组
+		      const currentArray = res[key];
+			  for (const item of currentArray) {
+			          if (Array.isArray(item)) {
+			            // 如果当前数组元素也是数组，递归检查
+			            if (JSON.stringify(item) == JSON.stringify(get_res)) {
+			              console.log(`包含在 ${key} 的一个元素中`);
+			            }
+			          }
+					  else{
+						  if (JSON.stringify(currentArray) == JSON.stringify(get_res)) {
+							console.log(`包含在 ${key} 中`);
+						  }
+					  }
+			        }
+		    }
+		  }
+	  }
+	});
 
 
     // 其他ECharts代码
