@@ -276,6 +276,7 @@
 	  }
 	}
 	
+<<<<<<< Updated upstream
 	//在这里定义引入错误到诊断结果的映射
 	const res = {
 		//''代表没有引入错误
@@ -319,6 +320,18 @@
 	  }
 	});
 
+=======
+	const config_list = {
+		A:"A",
+		B:"B",
+		C:"C",
+		E:"E",
+		F:"F",
+		G:"G",
+		H:"H",
+		S:"S",
+	}
+>>>>>>> Stashed changes
 
     // 其他ECharts代码
     var dom = document.getElementById('container');
@@ -333,7 +346,23 @@
 	    if (params.dataType === 'node') {
 	      // 获取点击的节点名称		  
 	      var nodeName = params.data.name;
-		  var addr = 'assets/node-config/' + nodeName + '.txt';
+		  var new_config_list = JSON.parse(JSON.stringify(config_list));
+		  console.log("config_list:"+config_list.E);
+		  console.log("clickoption:"+clickedOptions.A);
+		  if(clickedOptions.A == "1"){
+			  new_config_list.E = "E1";
+		  }
+		  if(clickedOptions.B == "1"){
+		  	  new_config_list.F = "F1";		  
+		  }
+		  if(clickedOptions.C == "1"){
+			  new_config_list.G = "G1";
+		  }
+		  var nodeConfig = new_config_list[nodeName];
+		  console.log("nodeconfig:"+nodeConfig);
+		  var addr = 'assets/node-config/' + nodeConfig + '.txt';
+		  
+		  console.log("addr:"+addr);
 	      
 		  document.getElementById('instruction1').style.display = 'none';
 		  
