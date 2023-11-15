@@ -374,12 +374,14 @@
 	      // 获取点击的节点名称		  
 	      var nodeName = params.data.name;
 		  var new_config_list = JSON.parse(JSON.stringify(config_list));
+		  //在这里配置错误类型和节点配置的对应关系
 		  if(clickedOptions.A == "1"){
 			  new_config_list.F = "F1";
 		  }
-		  // if(clickedOptions.B == "1"){
-		  // 	  new_config_list.F = "F1";		  
-		  // }
+		  if(clickedOptions.B == "1"){
+		  	  new_config_list.E = "E1";		  
+			  new_config_list.A = "A1";	
+		  }
 		  // if(clickedOptions.C == "1"){
 			 //  new_config_list.G = "G1";
 		  // }

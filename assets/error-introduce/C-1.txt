@@ -1,3 +1,0 @@
-引入错误种类C的1错误:
-access-list C-1 deny 12.0.0.0 0.255.255.255
-access-list C-1 permit any

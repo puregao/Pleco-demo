@@ -1,3 +1,13 @@
-引入错误种类B的1错误:
-access-list B-1 deny 12.0.0.0 0.255.255.255
-access-list B-1 permit any
+line added on node A:
++ ip prefix-list 1 permit 128.0.1.0/24
++ !
++ route-map RMap_A_from_G deny 10
++  match ip address prefix-list 1
++ route-map RMap_A_from_G permit 100
+
+line added on node E:
++ ip prefix-list 1 permit 128.0.1.0/24
++ !
++ route-map RMap_E_from_F deny 10
++  match ip address prefix-list 1
++ route-map RMap_E_from_F permit 100
