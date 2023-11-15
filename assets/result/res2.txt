@@ -1,0 +1,9 @@
+*******************Result********************
+Error Configuration:e.cfg
+ErrorLineNumber:84
+Command:route-map RMap_E_from_F deny 10
+ErrorLineNumber:85
+Command:match ip address prefix-list 1
+ErrorLineNumber:86
+Command:route-map RMap_E_from_F permit 100
+*******************end********************

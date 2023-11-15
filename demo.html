@@ -152,29 +152,29 @@
     <div class="function-area">
       <div class="title">Error type</div>
       <div class="dropdown">
-        <span id="dropdown-A">type A</span>
+        <span id="dropdown-A">origin-deny error</span>
         <div class="dropdown-content">
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '1')">引入错误种类A的1错误</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '2')">引入错误种类A的2错误</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '3')">引入错误种类A的3错误</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '1')">missing static route configuration</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '2')">wrong route advertisement ip</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('A', '3')">no redistribution configuration</button>
         </div>
       </div>
       <div class="dropdown">
-        <span id="dropdown-B">type B</span>
+        <span id="dropdown-B">propagation-deny error</span>
         <div class="dropdown-content">
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '1')">引入错误种类B的1错误</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '2')">引入错误种类B的2错误</button>
-          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '3')">引入错误种类B的3错误</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '1')">routemap inbound filter</button>
+          <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '2')">routemap outbound filter</button>
+          <!-- <button class="button btn btn-primary btn-xl" onclick="selectOption('B', '3')">引入错误种类B的3错误</button> -->
         </div>
       </div>
-      <div class="dropdown">
+     <!-- <div class="dropdown">
         <span id="dropdown-C">type C</span>
         <div class="dropdown-content">
           <button class="button btn btn-primary btn-xl" onclick="selectOption('C', '1')">引入错误种类C的1错误</button>
           <button class="button btn btn-primary btn-xl" onclick="selectOption('C', '2')">引入错误种类B的2错误</button>
           <button class="button btn btn-primary btn-xl" onclick="selectOption('C', '3')">引入错误种类B的3错误</button>
         </div>
-      </div>
+      </div> -->
 	  <div class="button-bar">
 	    <button id="introduce-button" class="button btn btn-primary btn-xl">Introduce</button>
 	  </div>
@@ -194,12 +194,15 @@
         <button class="button btn btn-primary btn-xl" id="reset-button">Reset</button>
       </div>
 	  <div class="title">Diagnose result</div>
-	  <div>
-	    <input type="text" id="fwdtree-box" value="Correct forwarding tree that meets the requirement." readonly>
+	  <div class="text-box" id="fwdtree-box">
+	  	<div id="instruction3">Correct forwarding tree that meets the requirement.</div>
+	  	<pre id="file-content3"></pre>
 	  </div>
-      <div>
-        <input type="text" id="result-box" value="Configuration errors which lead to requirement violation." readonly>
-      </div>
+	  <div class="text-box" id="result-box">
+	  	<div id="instruction4">Configuration errors which lead to requirement violation.</div>
+	  	<pre id="file-content4"></pre>
+	  </div>
+      
     </div>
   </div>
   <div class="bottom-button">
@@ -243,6 +246,10 @@
 	  document.getElementById('file-content1').textContent = ' ';
 	  document.getElementById('instruction2').style.display = 'block';
 	  document.getElementById('file-content2').textContent = ' ';
+	  document.getElementById('instruction3').style.display = 'block';
+	  document.getElementById('file-content3').textContent = ' ';
+	  document.getElementById('instruction4').style.display = 'block';
+	  document.getElementById('file-content4').textContent = ' ';
 	});
 
 	
@@ -279,9 +286,9 @@
 	//在这里定义引入错误到诊断结果的映射
 	const res = {
 		//''代表没有引入错误
-		res1 : [["1",'',''],["2",'','']],
-		res2 : ["3",'',''],
-		res3 : ['','',''],
+		res1 : [["1",'','']],
+		res2 : [["",'1','']],
+		res3 : [['','','']]
 	};
 	
 	//diagnose按钮诊断错我
@@ -306,6 +313,13 @@
 			            // 如果当前数组元素也是数组，递归检查
 			            if (JSON.stringify(item) == JSON.stringify(get_res)) {
 			              console.log(`包含在 ${key} 的一个元素中`);
+						  console.log(key);
+						  var res_addr = 'assets/result/'+key+'.txt';
+						  var tree_addr = 'assets/fwdtree/'+key+'.txt';
+						  document.getElementById('instruction3').style.display = 'none';
+						  fetch_and_display('file-content3',tree_addr);
+						  document.getElementById('instruction4').style.display = 'none';
+						  fetch_and_display('file-content4',res_addr);
 			            }
 			          }
 					  else{
@@ -318,6 +332,21 @@
 		  }
 	  }
 	});
+	
+	function fetch_and_display (text_box_id, file_addr){
+		
+		console.log("addr:"+ file_addr);
+		console.log("fill in text box:" + text_box_id);
+		
+		fetch(file_addr)
+		  .then(response => response.text())
+		  .then(data => {
+		    document.getElementById(text_box_id).textContent = data; // 将文件内容显示在文本框中
+		  })
+		  .catch(error => {
+		    console.error('无法读取文件:', error);
+		  });
+	}
 
 
 	const config_list = {
@@ -328,7 +357,6 @@
 		F:"F",
 		G:"G",
 		H:"H",
-		S:"S",
 	}
 
 
@@ -346,33 +374,27 @@
 	      // 获取点击的节点名称		  
 	      var nodeName = params.data.name;
 		  var new_config_list = JSON.parse(JSON.stringify(config_list));
-		  console.log("config_list:"+config_list.E);
-		  console.log("clickoption:"+clickedOptions.A);
 		  if(clickedOptions.A == "1"){
-			  new_config_list.E = "E1";
+			  new_config_list.F = "F1";
 		  }
-		  if(clickedOptions.B == "1"){
-		  	  new_config_list.F = "F1";		  
-		  }
-		  if(clickedOptions.C == "1"){
-			  new_config_list.G = "G1";
-		  }
+		  // if(clickedOptions.B == "1"){
+		  // 	  new_config_list.F = "F1";		  
+		  // }
+		  // if(clickedOptions.C == "1"){
+			 //  new_config_list.G = "G1";
+		  // }
 		  var nodeConfig = new_config_list[nodeName];
+		  if(nodeName == "d1" || nodeName == "S" || nodeName == "d2"){
+			  nodeConfig = nodeName;
+		  }
 		  console.log("nodeconfig:"+nodeConfig);
-		  var addr = 'assets/node-config/' + nodeConfig + '.txt';
+		  var addr = 'assets/node-config/' + nodeConfig + '.cfg';
 		  
 		  console.log("addr:"+addr);
 	      
 		  document.getElementById('instruction1').style.display = 'none';
 		  
-		  fetch(addr)
-		    .then(response => response.text())
-		    .then(data => {
-		      document.getElementById('file-content1').textContent = data; // 将文件内容显示在文本框中
-		    })
-		    .catch(error => {
-		      console.error('无法读取文件:', error);
-		    });
+		  fetch_and_display('file-content1',addr);
 	      
 	    }
 	  });
@@ -388,7 +410,7 @@
 	        formatter: function(params) {
 	            if (params.dataType === 'node') {
 	                // 当数据类型是节点时，显示节点的名称和其他内容
-	                return params.data.name + '<br>其他内容';
+	                return 'node '+params.data.name + '<br>Click to see detailed configuration';
 	            }
 	        }
 	  },

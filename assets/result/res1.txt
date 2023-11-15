@@ -1,0 +1,5 @@
+*******************Result********************
+Error Configuration:f.cfg
+ErrorLineNumber:-1
+Command:ip route 128.0.1.0 255.255.255.0 FastEthernet0/0
+*******************end********************
