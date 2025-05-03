@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <!-- Bootstrap Icons-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" type="text/css" />
+  <!-- SimpleLightbox plugin CSS-->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" /> -->
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="css/styles.css" rel="stylesheet" />
+  <style>
+    .container {
+      display: flex;
+      height: 90%;
+    }
+
+    .topology {
+      flex: 1;
+      height: 100%;
+    }
+
+    .function-area {
+      flex: 1;
+      padding: 10px;
+    }
+
+    .title {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      margin: 5px;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      border: 1px solid ; /* 添加边框样式 */
+      border-radius: 5px; /* 可选的，添加圆角边框 */
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .button {
+      display: block;
+      padding: 5px 10px;
+      text-align: center;
+      text-decoration: none;
+      color: black;
+      border: 1px solid ; /* 添加边框样式 */
+      border-radius: 5px; /* 可选的，添加圆角边框 */
+    }
+
+    .button-container .button {
+      margin: 0 10px;
+    }
+
+    .text-box {
+      display: inline-block;
+      margin-right: 10px;
+	  height: 300px;
+	  overflow: auto;
+    }
+
+    .button-bar {
+	  display: flex;
+      margin-top: 5px;
+	  margin-bottom: 5px;
+    }
+	
+	.button-bar button {
+	  margin-right: 10px; /* 设置右侧间距为10像素，你可以根据需要调整 */
+	  width: 120px;
+	}
+
+	#fwdtree-box,
+    #result-box {
+	  vertical-align: top;
+      width: 97.5%;
+      height: 50px;
+	  overflow: auto;
+    }
+	
+	#result-box {
+		margin-top: 10px;
+	  height: 160px;
+	}
+
+    .bottom-button {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+    }
+	
+	/* 在样式中添加以下CSS代码 */
+	.text-box {
+	  display: inline-block;
+	  width: 97.5%; /* 设置宽度为50%以确保并排排列并占据右半边 */
+	  padding: 5px;
+	  border: 1px solid #000; /* 添加一个边框以便更容易看到 */
+	}
+	
+	#dropdown-A,
+	#dropdown-B,
+	#dropdown-C {
+	  border: 1px solid ; /* 添加边框样式 */
+	  border-radius: 5px; /* 可选的，添加圆角边框 */
+	}
+	
+	.left-container {
+	  flex: 1;
+	  display: flex;
+	  flex-direction: column;
+	}
+	
+	.target-text {
+	  margin-left: 280px; /* 文本居中 */
+	  margin-top: 10px; /* 设置与上方元素的垂直间距 */
+	  font-size: 16px; /* 文本字号 */
+	  font-weight: bold; /* 文本加粗 */
+	}
+	
+	#instruction1,
+	#instruction2 {
+		display: block;
+	}
+
+
+  </style>
+</head>
+<body style="height: 100%; margin: 0;">
+  <div class="container">
+    <div class="left-container">
+      <div class="topology" id="container"></div>
+      <div class="bi-card-checklist target-text">  Intent1: A reaches p via C.</div>
+      <div class="bi-card-checklist target-text">  Intent2: F reaches p bypass B.</div>
+      <div class="bi-card-checklist target-text">  Intent3: B, C, E can reach p.</div>
+    </div>
+
+
+    <div class="function-area">
+      
+      <div class="title">Configuration showcase</div>
+      <div>
+        <div class="text-box" id="node-info-box">
+			<div id="instruction1">Click a node on the left to see its configuration.</div>
+			<pre id="file-content1"></pre>
+		</div>
+      </div>
+      <div class="button-bar">
+        <button id="diagnose-btn" class="button btn btn-primary btn-xl">Diagnose</button>
+        <button class="button btn btn-primary btn-xl" id="reset-button">Reset</button>
+      </div>
+	  <div class="title">Diagnose result</div>
+	  <div class="text-box" id="result-box">
+	  	<div id="instruction4">Configuration errors which lead to requirement violation.</div>
+	  	<pre id="file-content4"></pre>
+	  </div>
+      <div class="title">Repair result</div>
+      <div class="text-box" id="result-box">
+      	<div id="instruction3">Configuration patches that could repair the error.</div>
+      	<pre id="file-content3"></pre>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-button">
+    <button id="back-button" class="button btn btn-primary btn-xl" style="width: 110px;">Back</button>
+  </div>
+
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script type="text/javascript">
+	
+	//back按钮
+	document.getElementById('back-button').addEventListener('click', function() {
+	  // 使用 window.location 导航到 index.html
+	  window.location.href = 'index.html';
+	});
+	
+	//重置引入的错误配置
+	document.getElementById('reset-button').addEventListener('click', function() {
+	
+	  // 更新 两个文本框 的内容为默认
+	  
+	  document.getElementById('instruction3').style.display = 'block';
+	  document.getElementById('file-content3').textContent = ' ';
+	  document.getElementById('instruction4').style.display = 'block';
+	  document.getElementById('file-content4').textContent = ' ';
+	});
+
+
+	
+	//diagnose按钮诊断
+	document.getElementById('diagnose-btn').addEventListener('click', function() {
+	  var res_addr = 'assets/result/diagnosis.txt';
+	  var repair_addr = 'assets/result/repair.txt';
+	  document.getElementById('instruction4').style.display = 'none';
+	  fetch_and_display('file-content4',res_addr);
+	  document.getElementById('instruction3').style.display = 'none';
+	  fetch_and_display('file-content3',repair_addr);
+	});
+	
+	function fetch_and_display (text_box_id, file_addr){
+		
+		console.log("addr:"+ file_addr);
+		console.log("fill in text box:" + text_box_id);
+		
+		fetch(file_addr)
+		  .then(response => response.text())
+		  .then(data => {
+		    document.getElementById(text_box_id).textContent = data; // 将文件内容显示在文本框中
+		  })
+		  .catch(error => {
+		    console.error('无法读取文件:', error);
+		  });
+	}
+
+
+	const config_list = {
+		A:"A",
+		B:"B",
+		C:"C",
+		E:"E",
+		F:"F",
+		D:"D",
+		p:"p",
+	}
+
+
+    // 其他ECharts代码
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+	
+	// 监听节点点击事件，结果展示在第一个文本框里
+	  myChart.on('click', function (params) {
+	    if (params.dataType === 'node') {
+	      // 获取点击的节点名称		  
+	      var nodeName = params.data.name;
+		  var new_config_list = JSON.parse(JSON.stringify(config_list));
+		  
+		  var nodeConfig = new_config_list[nodeName];
+		  if(nodeName == "p"){
+			  nodeConfig = nodeName;
+		  }
+		  console.log("nodeconfig:"+nodeConfig);
+		  var addr = 'assets/running-example-configs/' + nodeConfig + '.cfg';
+		  
+		  console.log("addr:"+addr);
+	      
+		  document.getElementById('instruction1').style.display = 'none';
+		  
+		  fetch_and_display('file-content1',addr);
+	      
+	    }
+	  });
+
+    var option = {
+      // 你的ECharts图表配置
+	  title: {
+	    text: 'Running Example in Paper'
+	  },
+	  tooltip: {
+	    show: true, // 启用提示框
+	        trigger: 'item', // 触发方式，这里使用 'item' 表示鼠标悬停在节点或连接线上都会触发提示框
+	        formatter: function(params) {
+	            if (params.dataType === 'node') {
+	                // 当数据类型是节点时，显示节点的名称和其他内容
+	                return 'node '+params.data.name + '<br>Click to see detailed configuration';
+	            }
+	        }
+	  },
+	  animationDurationUpdate: 1500,
+	  animationEasingUpdate: 'quinticInOut',
+	  series: [
+	    {
+	      type: 'graph',
+	      layout: 'none',
+	      symbolSize: 50,
+	      roam: false,
+	      label: {
+	          show: true,
+	          fontSize: 16, // 增大字体大小，可以根据需要调整
+	      },
+	      edgeSymbol: ['circle', 'none'],
+	      edgeSymbolSize: [4, 10],
+	      edgeLabel: {
+	        fontSize: 20
+	      },
+	      data: [
+			{
+			  name: 'A',
+			  x: 450,
+			  y: 100
+			},
+			{
+			  name: 'F',
+			  x: 450,
+			  y: 400
+			},
+			{
+			  name: 'C',
+			  x: 800,
+			  y: 100
+			},
+			{
+			  name: 'B',
+			  x: 625,
+			  y: 100
+			},
+			{
+			  name: 'E',
+			  x: 712,
+			  y: 400
+			},
+			{
+			  name: 'D',
+			  x: 950,
+			  y: 250
+			},
+			{
+			  name: 'p',
+			  x: 1050,
+			  y: 250,
+			  symbol: 'rect', // 使用矩形形状
+			  symbolSize: [60, 50], // 设置矩形的大小
+			  itemStyle: {
+			      color: '#669933' // 设置背景颜色为青色
+			  },
+			},
+	      ],
+	      // links: [],
+	      links: [
+	        {
+	          source: 'A',
+	          target: 'B'
+	        },
+	        {
+	          source: 'A',
+	          target: 'F'
+	        },
+			{
+			  source: 'B',
+			  target: 'C'
+			},
+			{
+			  source: 'B',
+			  target: 'E'
+			},
+			{
+			  source: 'C',
+			  target: 'E'
+			},
+			{
+			  source: 'E',
+			  target: 'F'
+			},
+			{
+			  source: 'D',
+			  target: 'C'
+			},
+			{
+			  source: 'D',
+			  target: 'E'
+			},
+	        {
+	          source: 'D',
+	          target: 'p'
+	        },
+	      ],
+	      lineStyle: {
+	        opacity: 0.9,
+	        width: 2,
+	        curveness: 0
+	      }
+	    }
+	  ]
+    };
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+	
+	
+  </script>
+</body>
+</html>
